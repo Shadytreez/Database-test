@@ -3,44 +3,51 @@ let bodyParser = require('body-parser');
 let {Sequelize} = require('sequelize');
 let app = express();
 var sequelize = new Sequelize('postgres://postgres:qwe329@localhost/postgres');
+const cors = require("cors");
 
-app.use(bodyParser.urlencoded({extended:false}));
+app.use(bodyParser.json());
 app.use(express.json()); 
 app.use(express.urlencoded({ extended: true }));
 
-const Student = sequelize.define('student',{
-    firstname: Sequelize.STRING,
-    lastname: Sequelize.STRING,
-    email: Sequelize.STRING,
-    gpa: Sequelize.INTEGER,
-    studentCollege: Sequelize.STRING,
-    imageURL: Sequelize.STRING
-
-});
+app.use(cors());
 
 //kinda works
 //insert a table but all the value are null
 app.post('/formSubmit',function(request, response){
-     console.log(request.body);
- 
+  console.log("BODY REQUEST");
+      console.log(request.body);
+  
+     const Student = sequelize.define('student',{
+        firstname:{type: Sequelize.STRING} ,
+        lastname: {type: Sequelize.STRING} ,
+        email: {type: Sequelize.STRING} ,
+        gpa: {type: Sequelize.INTEGER} ,
+        studentCollege: {type: Sequelize.STRING} ,
+        imageURL: {type: Sequelize.STRING} 
+    
+    });
 //    /*
 //    Now let us define a model
 //    */
 //    //make sure the table exists
-   Student.sync().then(function(){
-       console.log("Student is ready to be use");
-   });
+    Student.sync().then(() => {
+    Student.create(request.body).then(response => response.send(response))
+  })
+//    Student.sync().then(function(){
+//        console.log("Student is ready to be use");
+//    });
 
 
-    Student.create({
-        firstname: request.body.firstName,
-        lastname: request.body.lastName,
-        email: request.body.email,
-        gpa: request.body.gpa,
-        studentCollege: request.body.studentCollege,
-        imageURL: request.body.imageUrl
-    }).then(data => res.send(data));
-;
+//     Student.create({
+//         firstname: request.body.firstName,
+//         lastname: request.body.lastName,
+//         email: request.body.email,
+//         gpa: request.body.gpa,
+//         studentCollege: request.body.studentCollege,
+//         imageURL: request.body.imageUrl
+//     }).then(data => res.send(data));
+    //Student.create(request.body).then(data => res.send(data));
+
 
     response.send("The form has been received");
 
@@ -85,24 +92,17 @@ app.get('/getAll', function(request, res) {
  app.post('/patch/:id', function(request, res){ 
     const id = request.params.id;
 
-    Student.update(request.body, {
+    Student.update({firstname: request.body.firstName,
+        lastname: request.body.lastName,
+        email: request.body.email,
+        gpa: request.body.gpa,
+        studentCollege: request.body.studentCollege,
+        imageURL: request.body.imageUrl}, {
         where: { id: id }
-      }).then(num => {
-        if (num == 1) {
-          res.send({
-            message: "Tutorial was updated successfully."
-          });
-        } else {
-          res.send({
-            message: `Cannot update Tutorial with id=${id}. Maybe Tutorial was not found or req.body is empty!`
-          });
-        }
-      })
-      .catch(err => {
-        res.status(500).send({
-          message: "Error updating Tutorial with id=" + id
-        });
+      }).then(function(rowsUpdated) {
+        res.json(rowsUpdated)
       });
+     
  });
 
  console.log("Test");

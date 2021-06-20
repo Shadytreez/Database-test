@@ -18,19 +18,19 @@ class App extends React.Component{
     e.preventDefault();
     const url = "http://localhost:3001/formSubmit"
     const myData = {
-      firstName: "truman",
-    lastName: "ngeuyn",
+      firstname: "truman",
+    lastname: "ngeuyn",
     email: "yahoo1",
     gpa: 2,
     studentCollege: "lehman",
-    imageUrl: "url"
+    imageURL: "url"
     }
-  
+    console.log(myData);
     try {
       const response = await fetch(url, {
         method: "POST",
-        mode: 'no-cors',
-        body: myData,
+        //mode: 'no-cors',
+        body: JSON.stringify(myData),
         headers: { 'Content-Type': 'application/json'}
       });
       console.log(response);
@@ -45,7 +45,7 @@ getAll = async e =>  {
   try {
     const response = await fetch(url, {
       method: "GET",
-      mode: 'no-cors',
+      //  mode: 'no-cors',
      
     }).
     then(response => response.json())
@@ -75,15 +75,31 @@ deleteID = async e =>  {
   } 
 };
 
+////this works 
+deleteAll = async e =>  {
+  e.preventDefault();
+   const url = "http://localhost:3001/deleteall";
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      mode: 'no-cors',
+     
+    })
+  } catch (err) {
+    console.error(err.message);
+  } 
+};
+
 getID = async e =>  {
   e.preventDefault();
    const url = "http://localhost:3001/getid/4";
   try {
     const response = await fetch(url, {
       method: "GET",
-      mode: 'no-cors',
+     // mode: 'no-cors',
      
-    }).then(response => response.json())
+    })
+    .then(response => response.json())
     .then(responseJson => {
       console.log("ID WAS SUCCESFUL");
       console.log("line 52", responseJson);
@@ -101,12 +117,12 @@ patchID = async e =>  {
   e.preventDefault();
    const url = "http://localhost:3001/patch/6";
    const myData = {
-    firstName: "truman",
-    lastName: "ngeuyn",
+    firstname: "truman",
+    lastname: "ngeuyn",
     email: "yahoo1",
     gpa: 2,
     studentCollege: "lehman",
-    imageUrl: "url"
+    imageURL: "url"
   }
   try {
     const response = await fetch(url, {
@@ -133,6 +149,7 @@ patchID = async e =>  {
                       <button type="submit" onClick={this.deleteID} className="studentsubmit" >Delete</button>
                       <button type="submit" onClick={this.getID} className="studentsubmit" >Get ID</button>
                       <button type="submit" onClick={this.patchID} className="studentsubmit" >Patch ID</button>
+                      <button type="submit" onClick={this.deleteAll} className="studentsubmit" >Delete All</button>
                 
               </div>
           </div>
